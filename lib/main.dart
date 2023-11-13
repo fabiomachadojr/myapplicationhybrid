@@ -1,4 +1,3 @@
-
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -34,6 +33,7 @@ class _PrimeNumberCalculatorState extends State<PrimeNumberCalculator> {
   final TextEditingController _rangeController = TextEditingController();
   int _primeCount = -1;
   File? _image;
+  File? _selectedImage;
 
   Future<void> _getImage() async {
     final image = await ImagePicker().getImage(source: ImageSource.camera);
@@ -42,6 +42,18 @@ class _PrimeNumberCalculatorState extends State<PrimeNumberCalculator> {
     });
   }
 
+  Future<void> _pickImage() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.getImage(source: ImageSource.gallery);
+
+    setState(() {
+      if (pickedFile != null) {
+        _selectedImage = File(pickedFile.path);
+      } else {
+        print('No image selected.');
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,40 +63,72 @@ class _PrimeNumberCalculatorState extends State<PrimeNumberCalculator> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            TextField(
-              controller: _rangeController,
-              keyboardType: TextInputType.number,
-              decoration: const InputDecoration(
-                labelText: 'Informe a faixa de números',
+            Container(
+              color: Colors.yellow, // Defina a cor desejada aqui
+              child: Column(
+                children: [
+                  TextField(
+                    controller: _rangeController,
+                    keyboardType: TextInputType.number,
+                    decoration: const InputDecoration(
+                      labelText: 'Informe a faixa de números',
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        _primeCount =
+                            calculatePrimes(int.parse(_rangeController.text));
+                      });
+                    },
+                    child: const Text('Calcular Números Primos'),
+                  ),
+                ],
               ),
             ),
             const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () {
-                setState(() {
-                  _primeCount =
-                      calculatePrimes(int.parse(_rangeController.text));
-                });
-              },
-              child: const Text('Calcular Números Primos'),
-            ),
+            Container(
+                color: Colors.green, // Defina a cor desejada aqui
+                child: Column(
+                  children: [
+                    if (_primeCount >= 0)
+                      Text(
+                          'Quantidade de números primos na faixa: $_primeCount'),
+                    const SizedBox(height: 20),
+                    ElevatedButton(
+                      onPressed: _getImage,
+                      child: Text('Tirar Foto'),
+                    ),
+                    const SizedBox(height: 16),
+                    _image == null
+                        ? const Text('Nenhuma foto tirada')
+                        : Image.file(
+                            _image! as File,
+                            width: 150,
+                            height: 150,
+                          ),
+                  ],
+                )),
             const SizedBox(height: 16),
-            if (_primeCount >= 0)
-              Text('Quantidade de números primos na faixa: $_primeCount'),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _getImage,
-              child: Text('Tirar Foto'),
-            ),
-            const SizedBox(height: 20),
-            _image == null
-                ? const Text('Nenhuma foto tirada')
-                : Image.file(
-              _image! as File,
-              width: 200,
-              height: 200,
-            ),
-
+            Container(
+                color: Colors.deepOrangeAccent, // Defina a cor desejada aqui
+                child: Column(
+                  children: [
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: _pickImage,
+                      child: const Icon(Icons.photo),
+                    ),
+                    _selectedImage == null
+                        ? Text('Nenhuma imagem selecionada')
+                        : Image.file(
+                            _selectedImage!,
+                            width: 150,
+                            height: 150,
+                          ),
+                  ],
+                )),
           ],
         ),
       ),
