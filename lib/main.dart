@@ -58,79 +58,82 @@ class _PrimeNumberCalculatorState extends State<PrimeNumberCalculator> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              color: Colors.yellow, // Defina a cor desejada aqui
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            width: double.infinity,
+            color: Colors.yellowAccent,
+            child: Column(
+              children: [
+                const SizedBox(height: 16),
+                TextField(
+                  controller: _rangeController,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    labelText: 'Informe a faixa de números',
+                  ),
+                ),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      _primeCount =
+                          calculatePrimes(int.parse(_rangeController.text));
+                    });
+                  },
+                  child: const Text('Calcular Números Primos'),
+                ),
+                const SizedBox(height: 16),
+                if (_primeCount >= 0)
+                  Text('Quantidade de números primos na faixa: $_primeCount'),
+                const SizedBox(height: 16),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
+          Container(
+              width: double.infinity,
+              color: Colors.green,
               child: Column(
                 children: [
-                  TextField(
-                    controller: _rangeController,
-                    keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(
-                      labelText: 'Informe a faixa de números',
-                    ),
-                  ),
                   const SizedBox(height: 16),
                   ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        _primeCount =
-                            calculatePrimes(int.parse(_rangeController.text));
-                      });
-                    },
-                    child: const Text('Calcular Números Primos'),
+                    onPressed: _getImage,
+                    child: Text('Camera'),
                   ),
+                  _image == null
+                      ? const Text('Nenhuma foto selecionada')
+                      : Image.file(
+                          _image! as File,
+                          width: 150,
+                          height: 150,
+                        ),
+                  const SizedBox(height: 16),
                 ],
-              ),
-            ),
-            const SizedBox(height: 16),
-            Container(
-                color: Colors.green, // Defina a cor desejada aqui
-                child: Column(
-                  children: [
-                    if (_primeCount >= 0)
-                      Text(
-                          'Quantidade de números primos na faixa: $_primeCount'),
-                    const SizedBox(height: 20),
-                    ElevatedButton(
-                      onPressed: _getImage,
-                      child: Text('Tirar Foto'),
-                    ),
-                    const SizedBox(height: 16),
-                    _image == null
-                        ? const Text('Nenhuma foto tirada')
-                        : Image.file(
-                            _image! as File,
-                            width: 150,
-                            height: 150,
-                          ),
-                  ],
-                )),
-            const SizedBox(height: 16),
-            Container(
-                color: Colors.deepOrangeAccent, // Defina a cor desejada aqui
-                child: Column(
-                  children: [
-                    const SizedBox(height: 16),
-                    ElevatedButton(
-                      onPressed: _pickImage,
-                      child: const Icon(Icons.photo),
-                    ),
-                    _selectedImage == null
-                        ? Text('Nenhuma imagem selecionada')
-                        : Image.file(
-                            _selectedImage!,
-                            width: 150,
-                            height: 150,
-                          ),
-                  ],
-                )),
-          ],
-        ),
+              )),
+          const SizedBox(height: 16),
+          Container(
+              width: double.infinity,
+              color: Colors.purpleAccent,
+              child: Column(
+                children: [
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: _pickImage,
+                    child: const Text('Selecionar imagem'),
+                  ),
+                  _selectedImage == null
+                      ? const Text('Nenhuma imagem selecionada')
+                      : Image.file(
+                          _selectedImage!,
+                          width: 150,
+                          height: 150,
+                        ),
+                  const SizedBox(height: 16),
+                ],
+              )),
+        ],
       ),
     );
   }
